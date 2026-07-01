@@ -18,4 +18,4 @@ jobs:
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push https://nourhan214:$HF_TOKEN@huggingface.co/spaces/nourhan214/CV-ATSE main -f
+        run: git push https://nourhan214:$HF_TOKEN@huggingface.co/spaces/nourhan214/CV-ATS main -f
