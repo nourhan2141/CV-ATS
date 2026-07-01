@@ -1,0 +1,22 @@
+# Generated markdown files
+merged_codebase.md
+merge_script.ps1
+merge_script.py
+
+# Environment variables
+.env
+
+# Python caching
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Data and Cache
+cache/
+data/
+synsetic_data/*.json
+synsetic_data/*.txt

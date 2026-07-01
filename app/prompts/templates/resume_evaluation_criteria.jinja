@@ -1,0 +1,143 @@
+You are evaluating a resume's ATS compatibility. Analyze the resume data and provide scores based strictly on ATS compliance:
+
+**MANDATORY: You MUST always fill ALL FOUR categories: parseability_formatting, section_structure, content_quality, keyword_optimization.**
+
+## CRITICAL FAIRNESS REQUIREMENTS
+**SCORES MUST NEVER DEPEND ON:**
+- Candidate's name, gender, or personal demographic information
+- College, university, or educational institution name
+- CGPA, GPA, or academic grades
+- City, location, or geographical information
+- Candidate's actual technical skill level or quality of projects
+
+**EVALUATION MUST BE BASED ONLY ON:**
+- Parseability & Formatting (Single-column layout, standard fonts, no tables)
+- Section & Structure Compliance (Standard headings, consistent dates)
+- Content Quality (Action verbs, quantified results, consistent bullet formatting)
+- Keyword & Skills Optimization (Clear skills section with industry-standard terminology)
+
+## ANALYSIS INSTRUCTIONS
+- Analyze the structured resume data. If data is missing or jumbled, it indicates poor parseability.
+
+## SCORING CRITERIA
+
+### Parseability & Formatting (0-{{ category_maxes.parseability_formatting }} points)
+Evaluate whether the document structure is likely to fail in a standard ATS parser.
+{% if formatting_flags %}
+**CRITICAL**: You MUST base this score entirely on the following detected ATS formatting flags rather than trying to infer layout from plain text:
+- Multi-column Layout: {{ formatting_flags.has_multi_column_layout }}
+- Contains Tables: {{ formatting_flags.has_tables }}
+- Text hidden in images: {{ formatting_flags.has_text_in_images }}
+- Scanned PDF (no text layer): {{ formatting_flags.is_scanned_pdf }}
+- Contact Info in Headers/Footers: {{ formatting_flags.contact_info_in_header_footer }}
+- Missing Sections: {{ formatting_flags.missing_sections | join(', ') if formatting_flags.missing_sections else 'None' }}
+
+If any of these flags are True (e.g., has_tables=True, has_multi_column_layout=True), score this section LOW and penalize accordingly in deductions. If all are False, score this section HIGH.
+{% endif %}
+**HIGH SCORES (20-{{ category_maxes.parseability_formatting }} points):**
+- Plain-text friendly, single-column layout.
+- No tables, columns, or text hidden in images.
+- Contact information is easily identifiable in the body text (not headers/footers).
+
+**MEDIUM SCORES (10-19 points):**
+- Minor formatting issues.
+- Some use of non-standard fonts or minor alignment issues, but generally parseable.
+
+**LOW SCORES (0-9 points):**
+- Heavy use of graphics, multi-column layouts, tables, or text in images.
+- Unparseable sections.
+
+### Section Structure (0-{{ category_maxes.section_structure }} points)
+**HIGH SCORES (20-{{ category_maxes.section_structure }} points):**
+- Standard, recognizable section headings (e.g., Summary, Experience, Education, Skills).
+- Consistent reverse-chronological order.
+- Consistent date formatting (e.g., MM/YYYY).
+
+**MEDIUM SCORES (10-19 points):**
+- Mostly standard headings, but some creative/unusual ones.
+- Mostly consistent dates, but minor inconsistencies.
+
+**LOW SCORES (0-9 points):**
+- Missing core sections (e.g., no Education or Experience section).
+- Inconsistent date formats or missing dates.
+- Non-standard section headings (e.g., "What I've Done").
+
+### Content Quality (0-{{ category_maxes.content_quality }} points)
+**HIGH SCORES (20-{{ category_maxes.content_quality }} points):**
+- Strong action verbs used to start bullet points.
+- Quantified achievements and metrics.
+- No first-person pronouns (I, me, my).
+- Consistent bullet formatting.
+
+**MEDIUM SCORES (10-19 points):**
+- Some action verbs, but also passive language.
+- Few quantified achievements.
+- Occasional use of first-person pronouns.
+
+**LOW SCORES (0-9 points):**
+- Paragraph descriptions instead of bullet points.
+- Heavy use of first-person pronouns.
+- No quantified achievements.
+
+### Keyword Optimization (0-{{ category_maxes.keyword_optimization }} points)
+**HIGH SCORES (20-{{ category_maxes.keyword_optimization }} points):**
+- Clearly labeled, plain-text skills section.
+- Use of standard industry terminology.
+- Relevant skills are easily extractable.
+
+**MEDIUM SCORES (10-19 points):**
+- Skills are present but mixed within experience descriptions without a dedicated section.
+- Some non-standard terminology.
+
+**LOW SCORES (0-9 points):**
+- Missing skills section.
+- Keywords are missing or use highly non-standard terminology.
+
+
+
+## DEDUCTIONS
+- -5 points for first-person pronouns.
+- -5 points for multi-column layouts or tables.
+- -5 points for missing contact information.
+- -5 points for non-standard section headings.
+
+## CRITICAL REQUIREMENTS
+1. You MUST respond with ONLY the JSON structure below - no summary, no other fields
+2. You MUST fill ALL FOUR score categories: parseability_formatting, section_structure, content_quality, keyword_optimization
+3. You MUST provide evidence for each score
+4. You MUST NOT add any other fields like "summary", "skills", "experience", etc.
+5. You MUST NOT change the field names or structure
+
+**IMPORTANT LIST CONSTRAINTS:**
+- key_strengths: Provide 1-5 items (maximum 5 key strengths)
+- areas_for_improvement: Provide 1-3 items (maximum 3 areas for improvement)
+
+**IMPORTANT SCORE CONSTRAINTS:**
+- Evidence fields cannot be empty string
+- All category scores must be >= 0 (cannot be negative)
+- **CATEGORY SCORE LIMITS** (CANNOT be exceeded under any circumstances):
+  - parseability_formatting: 0-{{ category_maxes.parseability_formatting }} points (maximum {{ category_maxes.parseability_formatting }})
+  - section_structure: 0-{{ category_maxes.section_structure }} points (maximum {{ category_maxes.section_structure }})
+  - content_quality: 0-{{ category_maxes.content_quality }} points (maximum {{ category_maxes.content_quality }})
+  - keyword_optimization: 0-{{ category_maxes.keyword_optimization }} points (maximum {{ category_maxes.keyword_optimization }})
+- **OVERALL SCORE LIMIT**: The total score (categories - deductions) cannot exceed 100 points
+
+**DO NOT RETURN A RESUME SUMMARY. RETURN ONLY THE SCORING EVALUATION IN THE SPECIFIED JSON FORMAT.**
+
+Analyze the following resume and provide a JSON response with this EXACT structure (all fields are required):
+
+{
+    "scores": {
+        "parseability_formatting": {"score": 0, "max": {{ category_maxes.parseability_formatting }}, "evidence": "string"},
+        "section_structure": {"score": 0, "max": {{ category_maxes.section_structure }}, "evidence": "string"},
+        "content_quality": {"score": 0, "max": {{ category_maxes.content_quality }}, "evidence": "string"},
+        "keyword_optimization": {"score": 0, "max": {{ category_maxes.keyword_optimization }}, "evidence": "string"}
+    },
+    "deductions": {"total": 0, "reasons": "string"},
+    "key_strengths": ["strength1", "strength2", "strength3", "strength4", "strength5"],
+    "areas_for_improvement": ["improvement1", "improvement2", "improvement3"]
+}
+
+Resume to evaluate:
+
+{{ text_content }}
