@@ -1,3 +1,12 @@
+---
+title: CV ATS
+emoji: ??
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+---
 # CV ATS Evaluator API
 
 A robust FastAPI backend service designed to evaluate resume PDFs against deterministic Applicant Tracking System (ATS) formatting constraints and structural best practices. 
@@ -69,3 +78,4 @@ This repository includes a GitHub Action to automatically sync your `main` branc
 
 ## License
 MIT License
+
